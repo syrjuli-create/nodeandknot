@@ -11,9 +11,10 @@ import Sidebar from '../components/Sidebar.astro';
 type Props = CollectionEntry<'blog'>['data'] & {
 	headings?: MarkdownHeading[];
 	currentId?: string;
+	hideMeta?: boolean;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, headings, currentId } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, headings, currentId, hideMeta } = Astro.props;
 const hasSidebar = headings !== undefined && currentId !== undefined;
 ---
 
@@ -103,6 +104,7 @@ const hasSidebar = headings !== undefined && currentId !== undefined;
 			<article>
 				<header class="title">
 					<h1>{title}</h1>
+					{!hideMeta && (
 					<div class="meta">
 						<FormattedDate date={pubDate} />
 						{updatedDate && (
@@ -112,6 +114,7 @@ const hasSidebar = headings !== undefined && currentId !== undefined;
 							</span>
 						)}
 					</div>
+					)}
 				</header>
 				{
 					heroImage && (
