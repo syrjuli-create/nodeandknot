@@ -1,0 +1,96 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { getCollection } from 'astro:content';
+
+interface Props {
+	headings: MarkdownHeading[];
+	currentId: string;
+}
+
+const { headings, currentId } = Astro.props;
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+<aside class="sidebar">
+	{
+		toc.length > 0 && (
+			<nav class="block" aria-label="목차">
+				<p class="label">목차</p>
+				<ul>
+					{toc.map((h) => (
+						<li class={`depth-${h.depth}`}>
+							<a href={`#${h.slug}`}>{h.text}</a>
+						</li>
+					))}
+				</ul>
+			</nav>
+		)
+	}
+	<nav class="block" aria-label="글 목록">
+		<p class="label">글 목록</p>
+		<ul>
+			{
+				posts.map((post) => (
+					<li>
+						<a
+							href={`/blog/${post.id}/`}
+							class={post.id === currentId ? 'current' : undefined}
+							aria-current={post.id === currentId ? 'page' : undefined}
+						>
+							{post.data.title}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</nav>
+</aside>
+
+<style>
+	.sidebar {
+		font-size: 0.85em;
+		line-height: 1.5;
+	}
+	.block + .block {
+		margin-top: 2em;
+	}
+	.label {
+		margin: 0 0 0.6em 0;
+		font-size: 0.8em;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		color: rgb(var(--gray));
+	}
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		border-left: 2px solid rgb(var(--gray-light));
+	}
+	li {
+		margin: 0;
+	}
+	li.depth-3 {
+		padding-left: 0.9em;
+	}
+	a {
+		display: block;
+		margin-left: -2px;
+		padding: 0.3em 0 0.3em 0.9em;
+		border-left: 2px solid transparent;
+		color: rgb(var(--gray-dark));
+		text-decoration: none;
+	}
+	a:hover {
+		color: var(--accent);
+	}
+	a.current {
+		border-left-color: var(--accent);
+		color: var(--accent);
+		font-weight: 600;
+	}
+</style>
