@@ -32,7 +32,7 @@ body {
 	overflow-wrap: break-word;
 	word-break: keep-all;
 	color: rgb(var(--text));
-	font-size: 17px;
+	font-size: 15px;
 	line-height: 1.8;
 	-webkit-font-smoothing: antialiased;
 }
@@ -55,19 +55,19 @@ h6 {
 	letter-spacing: -0.02em;
 }
 h1 {
-	font-size: 2em;
+	font-size: 32px;
 }
 h2 {
-	font-size: 1.5em;
+	font-size: 23px;
 }
 h3 {
-	font-size: 1.25em;
+	font-size: 19px;
 }
 h4 {
-	font-size: 1.1em;
+	font-size: 17px;
 }
 h5 {
-	font-size: 1em;
+	font-size: 15px;
 }
 strong,
 b {
@@ -131,16 +131,16 @@ hr {
 }
 @media (max-width: 720px) {
 	body {
-		font-size: 16px;
+		font-size: 14px;
 	}
 	main {
 		padding: 1.5em 0;
 	}
 	h1 {
-		font-size: 1.6em;
+		font-size: 24px;
 	}
 	h2 {
-		font-size: 1.3em;
+		font-size: 19px;
 	}
 }
 
