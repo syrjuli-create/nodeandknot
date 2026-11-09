@@ -7,10 +7,10 @@
 :root {
 	--accent: #2337ff;
 	--accent-dark: #000d8a;
-	--black: 15, 18, 25;
+	--black: 58, 54, 52;
 	--gray: 96, 115, 159;
 	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
+	--gray-dark: 74, 70, 68;
 	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
 	--box-shadow:
 		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
@@ -27,8 +27,8 @@ body {
 	overflow-wrap: break-word;
 	word-break: keep-all;
 	color: rgb(var(--gray-dark));
-	font-size: 20px;
-	line-height: 1.7;
+	font-size: 17px;
+	line-height: 1.8;
 }
 main {
 	width: 720px;
@@ -44,22 +44,23 @@ h5,
 h6 {
 	margin: 0 0 0.5rem 0;
 	color: rgb(var(--black));
-	line-height: 1.2;
+	font-weight: 600;
+	line-height: 1.35;
 }
 h1 {
-	font-size: 2.441em;
+	font-size: 1.9em;
 }
 h2 {
-	font-size: 2.441em;
+	font-size: 1.5em;
 }
 h3 {
-	font-size: 1.953em;
+	font-size: 1.3em;
 }
 h4 {
-	font-size: 1.563em;
+	font-size: 1.15em;
 }
 h5 {
-	font-size: 1.25em;
+	font-size: 1.05em;
 }
 strong,
 b {
@@ -108,7 +109,7 @@ blockquote {
 	border-left: 4px solid var(--accent);
 	padding: 0 0 0 20px;
 	margin: 0;
-	font-size: 1.333em;
+	font-size: 1.1em;
 }
 hr {
 	border: none;
@@ -116,13 +117,13 @@ hr {
 }
 @media (max-width: 720px) {
 	body {
-		font-size: 18px;
+		font-size: 16px;
 	}
 	h1 {
-		font-size: 1.953em;
+		font-size: 1.6em;
 	}
 	h2 {
-		font-size: 1.563em;
+		font-size: 1.35em;
 	}
 	main {
 		padding: 1em;
