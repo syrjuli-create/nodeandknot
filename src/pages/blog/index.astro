@@ -11,14 +11,31 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
-			main {
-				width: 960px;
+			.intro {
+				margin: 1.5em 0 2em;
+			}
+			.intro h1 {
+				margin: 0;
+				font-size: 2.2em;
+			}
+			.intro p {
+				margin: 0.4em 0 0;
+				color: rgb(var(--gray-dark));
+			}
+			@media (max-width: 720px) {
+				.intro h1 {
+					font-size: 1.7em;
+				}
 			}
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
+			<section class="intro">
+				<h1>전체 글</h1>
+				<p>뜨개질하는 개발자의 기록</p>
+			</section>
 			<section>
 				<PostList />
 			</section>

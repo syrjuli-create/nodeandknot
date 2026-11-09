@@ -13,14 +13,16 @@ const posts = (await getCollection('blog')).sort(
 		posts.map((post) => (
 			<li>
 				<a href={`/blog/${post.id}/`}>
+					<div class="text">
+						<h3 class="title">{post.data.title}</h3>
+						<p class="desc">{post.data.description}</p>
+						<p class="date">
+							<FormattedDate date={post.data.pubDate} />
+						</p>
+					</div>
 					{post.data.heroImage && (
-						<Image width={720} height={360} src={post.data.heroImage} alt="" />
+						<Image class="thumb" width={360} height={240} src={post.data.heroImage} alt="" />
 					)}
-					<h4 class="title">{post.data.title}</h4>
-					<p class="desc">{post.data.description}</p>
-					<p class="date">
-						<FormattedDate date={post.data.pubDate} />
-					</p>
 				</a>
 			</li>
 		))
@@ -29,76 +31,75 @@ const posts = (await getCollection('blog')).sort(
 
 <style>
 	ul {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 2rem;
-		list-style-type: none;
+		list-style: none;
 		margin: 0;
 		padding: 0;
 	}
-	ul li {
-		width: calc(50% - 1rem);
+	li + li {
+		margin-top: 0.5em;
 	}
-	ul li * {
+	a {
+		display: flex;
+		align-items: center;
+		gap: 2em;
+		margin: 0 -1em;
+		padding: 1.5em 1em;
+		border-radius: 20px;
 		text-decoration: none;
-		transition: 0.2s ease;
+		transition: background-color 0.15s ease;
 	}
-	ul li:first-child {
-		width: 100%;
-		margin-bottom: 1rem;
-		text-align: center;
+	a:hover {
+		background: rgba(var(--gray-light), 0.6);
 	}
-	ul li:first-child img {
-		width: 100%;
-	}
-	ul li:first-child .title {
-		font-size: 1.6rem;
-	}
-	ul li .title {
-		font-size: 1.15rem;
-	}
-	ul li img {
-		margin-bottom: 0.5rem;
-		border-radius: 12px;
-	}
-	ul li a {
-		display: block;
+	.text {
+		flex: 1;
+		min-width: 0;
 	}
 	.title {
 		margin: 0;
+		font-size: 1.35rem;
+		line-height: 1.45;
 		color: rgb(var(--black));
-		line-height: 1.4;
+	}
+	a:hover .title {
+		color: var(--accent);
 	}
 	.desc {
-		margin: 0.3em 0 0;
-		font-size: 0.9em;
+		margin: 0.5em 0 0;
+		font-size: 1rem;
+		line-height: 1.6;
 		color: rgb(var(--gray-dark));
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 	.date {
-		margin: 0.3em 0 0;
-		font-size: 0.85em;
+		margin: 0.8em 0 0;
+		font-size: 0.85rem;
 		color: rgb(var(--gray));
 	}
-	ul li a:hover h4,
-	ul li a:hover .date {
-		color: rgb(var(--accent));
-	}
-	ul a:hover img {
-		box-shadow: var(--box-shadow);
+	.thumb {
+		flex: none;
+		width: 180px;
+		height: 120px;
+		object-fit: cover;
+		border-radius: 16px;
 	}
 	@media (max-width: 720px) {
-		ul {
-			gap: 0.5em;
+		a {
+			gap: 1em;
+			padding: 1.2em 1em;
 		}
-		ul li {
-			width: 100%;
-			text-align: center;
+		.title {
+			font-size: 1.1rem;
 		}
-		ul li:first-child {
-			margin-bottom: 0;
+		.desc {
+			font-size: 0.9rem;
 		}
-		ul li:first-child .title {
-			font-size: 1.3em;
+		.thumb {
+			width: 96px;
+			height: 96px;
 		}
 	}
 </style>
