@@ -1,11 +1,11 @@
 ---
-import { SITE_TITLE } from '../consts';
+import Brand from './Brand.astro';
 
 const today = new Date();
 ---
 
 <footer>
-	<div class="inner">&copy; {today.getFullYear()} {SITE_TITLE}</div>
+	<div class="inner">&copy; {today.getFullYear()} <Brand /></div>
 </footer>
 <style>
 	footer {
