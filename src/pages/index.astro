@@ -18,6 +18,12 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 				margin: 0;
 				font-size: 2.2em;
 			}
+			.intro .node {
+				color: var(--brand-green);
+			}
+			.intro .knot {
+				color: var(--brand-pink);
+			}
 			.intro p {
 				margin: 0.4em 0 0;
 				color: rgb(var(--gray-dark));
@@ -33,7 +39,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 		<Header />
 		<main>
 			<section class="intro">
-				<h1>{SITE_TITLE}</h1>
+				<h1><span class="node">Node</span> &amp; <span class="knot">Knot</span></h1>
 				<p>{SITE_DESCRIPTION}</p>
 			</section>
 			<section>
