@@ -1,20 +1,31 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
+import { getPosts, type NavSection, type Post, postsSection, tocSection } from '../../lib/nav';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
+	const posts = await getPosts();
 	return posts.map((post) => ({
 		params: { slug: post.id },
-		props: post,
+		props: { post, posts },
 	}));
 }
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
+interface Props {
+	post: Post;
+	posts: Post[];
+}
+
+const { post, posts } = Astro.props;
 const { Content, headings } = await render(post);
+
+const sameCategory = posts.filter((p) => p.data.category === post.data.category);
+const sidebar: NavSection[] = [
+	tocSection(headings),
+	postsSection(post.data.category, sameCategory, post.id),
+].filter((s): s is NavSection => s !== null);
 ---
 
-<BlogPost {...post.data} headings={headings} currentId={post.id}>
+<BlogPost {...post.data} sidebar={sidebar}>
 	<Content />
 </BlogPost>

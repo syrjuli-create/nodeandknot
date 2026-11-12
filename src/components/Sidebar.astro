@@ -1,53 +1,35 @@
 ---
-import type { MarkdownHeading } from 'astro';
-import { getCollection } from 'astro:content';
+import type { NavSection } from '../lib/nav';
 
 interface Props {
-	headings: MarkdownHeading[];
-	currentId: string;
+	sections: NavSection[];
 }
 
-const { headings, currentId } = Astro.props;
-
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
-const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const { sections } = Astro.props;
 ---
 
 <aside class="sidebar">
 	{
-		toc.length > 0 && (
-			<nav class="block" aria-label="목차">
-				<p class="label">목차</p>
+		sections.map((section) => (
+			<nav class="block" aria-label={section.label}>
+				<p class="label">{section.label}</p>
 				<ul>
-					{toc.map((h) => (
-						<li class={`depth-${h.depth}`}>
-							<a href={`#${h.slug}`}>{h.text}</a>
+					{section.items.map((item) => (
+						<li class={item.indent ? 'indent' : undefined}>
+							<a
+								href={item.href}
+								class={item.current ? 'current' : undefined}
+								aria-current={item.current ? 'page' : undefined}
+							>
+								<span class="text">{item.text}</span>
+								{item.count !== undefined && <span class="count">{item.count}</span>}
+							</a>
 						</li>
 					))}
 				</ul>
 			</nav>
-		)
+		))
 	}
-	<nav class="block" aria-label="글 목록">
-		<p class="label">글 목록</p>
-		<ul>
-			{
-				posts.map((post) => (
-					<li>
-						<a
-							href={`/blog/${post.id}/`}
-							class={post.id === currentId ? 'current' : undefined}
-							aria-current={post.id === currentId ? 'page' : undefined}
-						>
-							{post.data.title}
-						</a>
-					</li>
-				))
-			}
-		</ul>
-	</nav>
 </aside>
 
 <style>
@@ -74,11 +56,13 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 	li {
 		margin: 0;
 	}
-	li.depth-3 {
+	li.indent {
 		padding-left: 0.9em;
 	}
 	a {
-		display: block;
+		display: flex;
+		justify-content: space-between;
+		gap: 0.5em;
 		margin-left: -2px;
 		padding: 0.3em 0 0.3em 0.9em;
 		border-left: 2px solid transparent;
@@ -92,5 +76,10 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 		border-left-color: var(--accent);
 		color: var(--accent);
 		font-weight: 600;
+	}
+	.count {
+		flex: none;
+		color: rgb(var(--gray));
+		font-weight: 400;
 	}
 </style>

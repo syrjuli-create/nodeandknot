@@ -1,5 +1,4 @@
 ---
-import type { MarkdownHeading } from 'astro';
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
@@ -8,30 +7,25 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import Sidebar from '../components/Sidebar.astro';
+import { categoryHref, categorySlug, type NavSection } from '../lib/nav';
 
-type Props = CollectionEntry<'blog'>['data'] & {
-	headings?: MarkdownHeading[];
-	currentId?: string;
+type Props = Omit<CollectionEntry<'blog'>['data'], 'category'> & {
+	category?: string;
+	sidebar?: NavSection[];
 	hideMeta?: boolean;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, headings, currentId, hideMeta } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, category, sidebar, hideMeta } =
+	Astro.props;
 const BRAND = 'Node & Knot';
 const titleParts = title.split(BRAND);
-const hasSidebar = headings !== undefined && currentId !== undefined;
+const hasSidebar = sidebar !== undefined && sidebar.length > 0;
 ---
 
 <html lang="ko">
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
-			main {
-				width: 720px;
-				max-width: calc(100% - 2em);
-			}
-			main.with-sidebar {
-				width: 1080px;
-			}
 			.title {
 				padding: 1em 0 0;
 			}
@@ -56,35 +50,12 @@ const hasSidebar = headings !== undefined && currentId !== undefined;
 			.prose {
 				margin-top: 2.5em;
 			}
-			.with-sidebar {
-				display: grid;
-				grid-template-columns: 220px minmax(0, 720px);
-				gap: 4em;
-				justify-content: center;
-				align-items: start;
+			.meta a {
+				color: inherit;
+				text-decoration: none;
 			}
-			.with-sidebar .side {
-				position: sticky;
-				top: 92px;
-				padding-top: 1.5em;
-				max-height: calc(100vh - 110px);
-				overflow-y: auto;
-			}
-			@media (max-width: 1100px) {
-				.with-sidebar {
-					grid-template-columns: minmax(0, 1fr);
-					gap: 2em;
-				}
-				main.with-sidebar {
-					width: 720px;
-				}
-				.with-sidebar .side {
-					order: 2;
-					position: static;
-					padding: 2em 0 0;
-					max-height: none;
-					border-top: 1px solid rgb(var(--gray-light));
-				}
+			.meta a:hover {
+				color: var(--accent);
 			}
 			@media (max-width: 720px) {
 				.title h1 {
@@ -98,9 +69,9 @@ const hasSidebar = headings !== undefined && currentId !== undefined;
 		<Header />
 		<main class={hasSidebar ? 'with-sidebar' : undefined}>
 			{
-				headings && currentId && (
+				sidebar && hasSidebar && (
 					<div class="side">
-						<Sidebar headings={headings} currentId={currentId} />
+						<Sidebar sections={sidebar} />
 					</div>
 				)
 			}
@@ -116,6 +87,12 @@ const hasSidebar = headings !== undefined && currentId !== undefined;
 					</h1>
 					{!hideMeta && (
 					<div class="meta">
+						{category && (
+							<>
+								<a href={categoryHref(categorySlug(category))}>{category}</a>
+								{' · '}
+							</>
+						)}
 						<FormattedDate date={pubDate} />
 						{updatedDate && (
 							<span>

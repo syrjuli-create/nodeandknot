@@ -1,46 +1,18 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
 import Brand from '../components/Brand.astro';
 import PostList from '../components/PostList.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import SidebarPage from '../layouts/SidebarPage.astro';
+import { categorySection, getPosts, postsSection } from '../lib/nav';
+
+const posts = await getPosts();
+const sections = [categorySection(posts), postsSection('최근 글', posts.slice(0, 5))];
 ---
 
-<!doctype html>
-<html lang="ko">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			.intro {
-				margin: 1.5em 0 2em;
-			}
-			.intro h1 {
-				margin: 0;
-				font-size: 35px;
-			}
-			.intro p {
-				margin: 0.4em 0 0;
-				color: rgb(var(--gray-dark));
-			}
-			@media (max-width: 720px) {
-				.intro h1 {
-					font-size: 25px;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section class="intro">
-				<h1><Brand /></h1>
-				<p>{SITE_DESCRIPTION}</p>
-			</section>
-			<section>
-				<PostList />
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+<SidebarPage title={SITE_TITLE} description={SITE_DESCRIPTION} sections={sections}>
+	<section class="intro">
+		<h1><Brand /></h1>
+		<p>{SITE_DESCRIPTION}</p>
+	</section>
+	<PostList posts={posts} />
+</SidebarPage>

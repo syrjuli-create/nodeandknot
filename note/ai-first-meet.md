@@ -2,6 +2,7 @@
 title: 'AI와 친해지기 쉽지 않다: RAG 챗봇 입문기'
 description: '신기한 도구인 줄 알았던 AI가 경쟁자가 되고, 결국 친해져 보기로 하며 시작한 RAG 챗봇 이야기'
 pubDate: '2026-11-10'
+category: 'AI 개발'
 ---
 
 ## AI가 다가왔다

@@ -157,3 +157,57 @@ hr {
 	clip-path: inset(50%);
 	white-space: nowrap;
 }
+
+/* 왼쪽 사이드바 + 본문 두 칸 배치 (글 페이지, 목록 페이지 공통) */
+main.with-sidebar {
+	width: 1080px;
+	display: grid;
+	grid-template-columns: 200px minmax(0, 720px);
+	gap: 4em;
+	justify-content: center;
+	align-items: start;
+}
+main.with-sidebar > .side {
+	position: sticky;
+	top: 92px;
+	padding-top: 1.5em;
+	max-height: calc(100vh - 110px);
+	overflow-y: auto;
+}
+@media (max-width: 1100px) {
+	main.with-sidebar {
+		width: 720px;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2em;
+	}
+	main.with-sidebar > .side {
+		order: 2;
+		position: static;
+		padding: 2em 0 0;
+		max-height: none;
+		border-top: 1px solid rgb(var(--gray-light));
+	}
+}
+
+/* 목록 페이지 상단 제목 영역 */
+.intro {
+	margin: 1.5em 0 2em;
+}
+.intro h1 {
+	margin: 0;
+	font-size: 35px;
+}
+.intro p {
+	margin: 0.4em 0 0;
+	color: rgb(var(--gray-dark));
+}
+@media (max-width: 720px) {
+	.intro h1 {
+		font-size: 25px;
+	}
+}
+
+/* 목차로 이동할 때 고정된 상단 바에 소제목이 가리지 않게 */
+[id] {
+	scroll-margin-top: 80px;
+}

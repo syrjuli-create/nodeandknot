@@ -1,0 +1,35 @@
+---
+// 왼쪽 사이드바가 있는 목록형 페이지(Home, Blog, 카테고리, 읽을거리)의 공통 틀.
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
+import type { NavSection } from '../lib/nav';
+
+interface Props {
+	title: string;
+	description: string;
+	sections: NavSection[];
+}
+
+const { title, description, sections } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ko">
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+	<body>
+		<Header />
+		<main class="with-sidebar">
+			<div class="side">
+				<Sidebar sections={sections} />
+			</div>
+			<div class="content">
+				<slot />
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>

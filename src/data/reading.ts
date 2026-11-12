@@ -6,6 +6,8 @@ export interface ReadingItem {
 	description: string;
 	url: string;
 	source: string;
+	/** 읽을거리 왼쪽 메뉴의 분류 이름 (예: AI, 개발, 뜨개) */
+	category: string;
 }
 
 export const READING: ReadingItem[] = [
@@ -14,5 +16,6 @@ export const READING: ReadingItem[] = [
 		description: '토스에서 늘어나는 LLM 비용을 빠르게 줄이는 방법을 소개합니다.',
 		url: 'https://toss.tech/article/snap-llm-cost-reduction',
 		source: 'toss.tech',
+		category: 'AI',
 	},
 ];

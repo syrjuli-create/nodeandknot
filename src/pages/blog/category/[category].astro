@@ -1,0 +1,37 @@
+---
+import PostList from '../../../components/PostList.astro';
+import { SITE_TITLE } from '../../../consts';
+import SidebarPage from '../../../layouts/SidebarPage.astro';
+import { categorySection, getPosts, type Post, postsSection, usedCategories } from '../../../lib/nav';
+
+export async function getStaticPaths() {
+	const posts = await getPosts();
+	return usedCategories(posts).map((c) => ({
+		params: { category: c.slug },
+		props: {
+			name: c.name,
+			slug: c.slug,
+			posts,
+			filtered: posts.filter((p) => p.data.category === c.name),
+		},
+	}));
+}
+
+interface Props {
+	name: string;
+	slug: string;
+	posts: Post[];
+	filtered: Post[];
+}
+
+const { name, slug, posts, filtered } = Astro.props;
+const sections = [categorySection(posts, slug), postsSection(name, filtered)];
+---
+
+<SidebarPage title={`${name} | ${SITE_TITLE}`} description={`${name} 글 모음`} sections={sections}>
+	<section class="intro">
+		<h1>{name}</h1>
+		<p>{filtered.length}개의 글</p>
+	</section>
+	<PostList posts={filtered} />
+</SidebarPage>

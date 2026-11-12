@@ -1,5 +1,17 @@
 ---
 import Layout from '../layouts/BlogPost.astro';
+import type { NavSection } from '../lib/nav';
+
+const sidebar: NavSection[] = [
+	{
+		label: '목차',
+		items: [
+			{ text: '이름에 대해', href: '#name' },
+			{ text: '뜨개질을 시작한 이유', href: '#why-knit' },
+			{ text: '여기서 다루는 이야기', href: '#topics' },
+		],
+	},
+];
 ---
 
 <Layout
@@ -7,26 +19,27 @@ import Layout from '../layouts/BlogPost.astro';
 	description="낮에는 AI를, 밤에는 뜨개질을 하는 개발자의 기록장"
 	pubDate={new Date('2026-11-09')}
 	hideMeta
+	sidebar={sidebar}
 >
 	<p>
 		낮에는 AI를 잘 학습시키려고 애쓰고, 밤에는 실을 잡고 코를 세는 개발자입니다. 이 블로그는 그 두
 		세계를 오가며 남기는 작은 기록장이에요.
 	</p>
 
-	<h2>이름에 대해</h2>
+	<h2 id="name">이름에 대해</h2>
 	<p>
 		<strong>Node</strong>는 코드 속 노드, <strong>Knot</strong>은 실로 만든 매듭입니다. 하나는 화면
 		안에서, 하나는 손끝에서 이어지고 엮인다는 점이 닮았다고 생각해서 붙인 이름이에요.
 	</p>
 
-	<h2>뜨개질을 시작한 이유</h2>
+	<h2 id="why-knit">뜨개질을 시작한 이유</h2>
 	<p>
 		거창한 이유는 없어요. 외할머니와 엄마가 뜨는 걸 보면서 자연스럽게 따라 잡기 시작했습니다. 그런데
 		뜨다 보니 도안은 코드 같고, 코 하나 빠진 걸 찾는 건 디버깅 같더라고요. 그렇게 둘이 생각보다
 		닮았다는 걸 알게 됐습니다.
 	</p>
 
-	<h2>여기서 다루는 이야기</h2>
+	<h2 id="topics">여기서 다루는 이야기</h2>
 	<ul>
 		<li><strong>뜨개 기록</strong>: 부끄러운 첫 작품부터 자랑하고 싶은 작품까지</li>
 		<li><strong>AI 개발 이야기</strong>: 일하면서 배우고 부딪힌 것들</li>
