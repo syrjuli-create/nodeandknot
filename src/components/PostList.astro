@@ -22,8 +22,14 @@ const { posts } = Astro.props;
 							{post.data.category} · <FormattedDate date={post.data.pubDate} />
 						</p>
 					</div>
-					{post.data.heroImage && (
-						<Image class="thumb" width={360} height={240} src={post.data.heroImage} alt="" />
+					{(post.data.thumbnail ?? post.data.heroImage) && (
+						<Image
+							class="thumb"
+							width={360}
+							height={240}
+							src={(post.data.thumbnail ?? post.data.heroImage)!}
+							alt=""
+						/>
 					)}
 				</a>
 			</li>

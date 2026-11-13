@@ -3,6 +3,7 @@ title: 'AI와 친해지기 쉽지 않다 TOO : RAG 챗봇 입문기'
 description: '바이브 코딩으로 만든 RAG 챗봇을 CLI로 다시 만들며 정리한 색인·검색 파이프라인 이야기'
 pubDate: '2026-11-13'
 category: 'AI 개발'
+thumbnail: './rag-pipeline-1.png'
 ---
 
 바이브 코딩이라고 하죠. AI에게 말로 전달해서 프로그램 만드는 걸.
