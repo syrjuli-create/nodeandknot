@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+---
+
+<Layout
+	title="페이지를 찾을 수 없어요"
+	description="요청하신 페이지가 없거나 주소가 바뀌었어요."
+	pubDate={new Date('2026-11-15')}
+	hideMeta
+>
+	<p>
+		코 하나가 빠진 것처럼, 찾으시는 페이지가 보이지 않네요. 주소가 바뀌었거나 삭제된 글일 수
+		있어요.
+	</p>
+	<ul>
+		<li><a href="/">홈으로 가기</a></li>
+		<li><a href="/blog/">전체 글 보기</a></li>
+		<li><a href="/contact/">문의하기</a></li>
+	</ul>
+</Layout>

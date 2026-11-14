@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+import { CONTACT_EMAIL } from '../consts';
+---
+
+<Layout
+	title="문의하기"
+	description="Node & Knot에 연락하는 방법"
+	pubDate={new Date('2026-11-15')}
+	hideMeta
+>
+	<p>
+		글에 대한 의견, 잘못된 내용 제보, 뜨개질이나 AI 개발 이야기 모두 환영합니다. 아래 이메일로
+		편하게 연락 주세요.
+	</p>
+
+	<h2 id="email">이메일</h2>
+	<p>
+		{
+			CONTACT_EMAIL ? (
+				<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+			) : (
+				'준비 중입니다.'
+			)
+		}
+	</p>
+	<p>보통 2~3일 안에 답장드려요. 주말이나 뜨개질에 빠진 날에는 조금 늦을 수 있어요.</p>
+
+	<h2 id="note">참고해 주세요</h2>
+	<ul>
+		<li>보내 주신 이메일 주소와 내용은 답장에만 사용하고, 답변이 끝나면 삭제합니다.</li>
+		<li>
+			자세한 내용은 <a href="/privacy/">개인정보처리방침</a>에서 확인할 수 있습니다.
+		</li>
+	</ul>
+</Layout>
