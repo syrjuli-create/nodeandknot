@@ -12,6 +12,13 @@ export interface ReadingItem {
 
 export const READING: ReadingItem[] = [
 	{
+		title: '서울시 공공데이터',
+		description: '서울시가 공개하는 교통, 환경, 인구 등 다양한 공공데이터와 Open API를 모아 둔 곳입니다.',
+		url: 'https://data.seoul.go.kr/',
+		source: 'data.seoul.go.kr',
+		category: '데이터',
+	},
+	{
 		title: '손가락 튕기기로 LLM 비용 줄이기',
 		description: '토스에서 늘어나는 LLM 비용을 빠르게 줄이는 방법을 소개합니다.',
 		url: 'https://toss.tech/article/snap-llm-cost-reduction',
