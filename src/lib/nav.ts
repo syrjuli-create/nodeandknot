@@ -1,6 +1,7 @@
 import type { MarkdownHeading } from 'astro';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import { CATEGORIES } from '../consts';
+import { AI_PROJECTS } from '../data/ai-projects';
 
 export type Post = CollectionEntry<'blog'>;
 
@@ -59,6 +60,20 @@ export function postsSection(label: string, posts: Post[], currentId?: string): 
 			text: p.data.title,
 			href: postHref(p),
 			current: p.id === currentId,
+		})),
+	};
+}
+
+export const AI_PROJECTS_HREF = '/ai-projects/';
+
+/** "AI로 만들고 있는것들" 메뉴. current는 지금 보고 있는 도구의 slug. */
+export function aiProjectsSection(current?: string): NavSection {
+	return {
+		label: 'AI로 만들고 있는것들',
+		items: AI_PROJECTS.map((p) => ({
+			text: p.title,
+			href: `${AI_PROJECTS_HREF}#${p.slug}`,
+			current: p.slug === current,
 		})),
 	};
 }

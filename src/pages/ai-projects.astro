@@ -1,0 +1,251 @@
+---
+import { SITE_TITLE } from '../consts';
+import { AI_PROJECTS } from '../data/ai-projects';
+import SidebarPage from '../layouts/SidebarPage.astro';
+import { aiProjectsSection } from '../lib/nav';
+
+const sections = [aiProjectsSection()];
+---
+
+<SidebarPage
+	title={`AI로 만들고 있는것들 | ${SITE_TITLE}`}
+	description="AI와 함께 만들고 있는 뜨개 도구 모음"
+	sections={sections}
+>
+	<section class="intro">
+		<h1>AI로 만들고 있는것들</h1>
+		<p>AI와 함께 만들고 있는 도구 모음. 아직 만드는 중이라 자주 바뀔 수 있어요.</p>
+	</section>
+
+	{
+		AI_PROJECTS.map((p) => (
+			<article class="tool" id={p.slug}>
+				<div class="tags">
+					<span class="tag">직접 만든 도구</span>
+					{p.status && <span class="tag beta">{p.status}</span>}
+				</div>
+				<h2 class="title">{p.title}</h2>
+				<p class="desc">{p.description}</p>
+				{p.needsClaudeLogin && (
+					<div class="notice login">
+						<strong>도안을 만들려면 Claude 로그인이 필요해요</strong>
+						<span>
+							이 도구는 Claude(claude.ai)에서 열려요. 예시 도안과 실 색·완성 예상 이미지는 로그인 없이 볼 수
+							있지만, 사진으로 도안을 만들려면 본인의 Claude 계정으로 로그인해야 해요. 이때 쓰는 AI 사용량은
+							본인 계정에서 차감돼요. 계정이 없다면 claude.ai에서 무료로 가입할 수 있어요.
+						</span>
+					</div>
+				)}
+				{p.status && (
+					<div class="notice beta">
+						<strong>아직 {p.status}이에요</strong>
+						<span>
+							도안의 코수·치수가 틀리거나 화면이 바뀔 수 있어요. 실제로 뜨기 전에 꼭 한 번 더 확인해 주시고,
+							이상한 점은 알려 주시면 고칠게요.
+						</span>
+					</div>
+				)}
+				<a
+					class="go"
+					href={p.url}
+					target="_blank"
+					rel="noopener"
+					data-tool-link={p.needsClaudeLogin ? 'claude' : undefined}
+					data-beta={p.status ? 'true' : undefined}
+				>
+					도구 열기 →
+				</a>
+			</article>
+		))
+	}
+
+	<dialog class="dialog" id="claudeDialog" aria-labelledby="claudeDialogTitle">
+		<p class="dialog-title" id="claudeDialogTitle">Claude로 이동할게요</p>
+		<p class="dialog-beta" id="claudeDialogBeta" hidden>테스트 버전이라 결과가 정확하지 않을 수 있어요.</p>
+		<ul>
+			<li>새 탭에서 claude.ai가 열려요.</li>
+			<li>사진으로 도안을 만들려면 오른쪽 위 로그인 버튼으로 본인의 Claude 계정에 로그인해 주세요.</li>
+			<li>도안 생성에 쓰는 AI 사용량은 본인 계정에서 차감돼요.</li>
+			<li>처음 도안을 만들 때 Claude 사용 허락을 한 번 물어봐요.</li>
+		</ul>
+		<div class="dialog-btns">
+			<button type="button" class="cancel" id="claudeDialogCancel">취소</button>
+			<a class="continue" id="claudeDialogGo" href="#" target="_blank" rel="noopener">Claude로 이동하기</a>
+		</div>
+	</dialog>
+</SidebarPage>
+
+<script>
+	// Claude 로그인이 필요한 도구는 바로 이동하지 않고 안내 창을 먼저 띄운다.
+	// <dialog>를 못 쓰는 브라우저는 링크로 바로 이동한다.
+	const dialog = document.getElementById('claudeDialog') as HTMLDialogElement | null;
+	const go = document.getElementById('claudeDialogGo') as HTMLAnchorElement | null;
+	const beta = document.getElementById('claudeDialogBeta');
+	if (dialog && go && typeof dialog.showModal === 'function') {
+		document.querySelectorAll<HTMLAnchorElement>('a[data-tool-link="claude"]').forEach((link) => {
+			link.addEventListener('click', (e) => {
+				e.preventDefault();
+				go.href = link.href;
+				if (beta) beta.hidden = link.dataset.beta !== 'true';
+				dialog.showModal();
+			});
+		});
+		document.getElementById('claudeDialogCancel')?.addEventListener('click', () => dialog.close());
+		go.addEventListener('click', () => dialog.close());
+		dialog.addEventListener('click', (e) => {
+			if (e.target === dialog) dialog.close();
+		});
+	}
+</script>
+
+<style>
+	.tool {
+		padding: 24px;
+		border: 1px solid #e5e8eb;
+		border-radius: 16px;
+		background: #f9fafb;
+	}
+	.tool + .tool {
+		margin-top: 1.5em;
+	}
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+	.tag {
+		font-size: 12px;
+		font-weight: 600;
+		line-height: 1.6;
+		padding: 2px 9px;
+		border-radius: 999px;
+		color: var(--accent);
+		background: var(--accent-soft);
+	}
+	.tag.beta {
+		color: #d22030;
+		background: #ffeeee;
+	}
+	.title {
+		margin: 12px 0 6px;
+		font-size: 20px;
+	}
+	.desc {
+		margin: 0 0 16px;
+		font-size: 15px;
+		line-height: 1.7;
+		color: rgb(var(--gray-dark));
+	}
+	.notice {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		margin-bottom: 10px;
+		padding: 12px 14px;
+		border-radius: 10px;
+		font-size: 14px;
+		line-height: 1.6;
+	}
+	.notice.login {
+		background: #fff8e6;
+		border: 1px solid #ffe2a8;
+		color: #6b4e00;
+	}
+	.notice.login strong {
+		color: #8a5a00;
+	}
+	.notice.beta {
+		background: rgb(var(--gray-light));
+		border: 1px solid #e5e8eb;
+		color: rgb(var(--gray-dark));
+	}
+	.notice.beta strong {
+		color: rgb(var(--text));
+	}
+	.go {
+		display: inline-block;
+		margin-top: 8px;
+		padding: 12px 20px;
+		border-radius: 10px;
+		background: var(--accent);
+		color: #fff;
+		font-size: 15px;
+		font-weight: 600;
+		text-decoration: none;
+	}
+	.go:hover {
+		background: var(--accent-dark);
+		color: #fff;
+	}
+	.go:focus-visible,
+	.dialog button:focus-visible,
+	.dialog a:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.dialog {
+		width: 100%;
+		max-width: min(420px, calc(100vw - 32px));
+		padding: 24px;
+		border: 0;
+		border-radius: 16px;
+		color: rgb(var(--text));
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+	}
+	.dialog::backdrop {
+		background: rgba(0, 0, 0, 0.4);
+	}
+	.dialog-title {
+		margin: 0 0 12px;
+		font-size: 18px;
+		font-weight: 700;
+		color: rgb(var(--black));
+	}
+	.dialog-beta {
+		margin: 0 0 12px;
+		padding: 8px 12px;
+		border-radius: 8px;
+		background: #ffeeee;
+		color: #d22030;
+		font-size: 14px;
+		font-weight: 600;
+	}
+	.dialog ul {
+		margin: 0 0 20px;
+		padding-left: 1.2em;
+		font-size: 14.5px;
+		line-height: 1.8;
+	}
+	.dialog-btns {
+		display: flex;
+		gap: 8px;
+		justify-content: flex-end;
+	}
+	.dialog-btns .cancel,
+	.dialog-btns .continue {
+		font: inherit;
+		font-size: 15px;
+		font-weight: 600;
+		padding: 10px 16px;
+		border: 0;
+		border-radius: 10px;
+		cursor: pointer;
+		text-decoration: none;
+	}
+	.dialog-btns .cancel {
+		background: rgb(var(--gray-light));
+		color: rgb(var(--gray-dark));
+	}
+	.dialog-btns .continue {
+		background: var(--accent);
+		color: #fff;
+	}
+	@media (max-width: 720px) {
+		.tool {
+			padding: 18px;
+		}
+		.title {
+			font-size: 17px;
+		}
+	}
+</style>

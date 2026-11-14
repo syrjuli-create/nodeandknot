@@ -2,11 +2,18 @@
 import PostList from '../../components/PostList.astro';
 import { SITE_TITLE } from '../../consts';
 import SidebarPage from '../../layouts/SidebarPage.astro';
-import { categorySection, getPosts, postsSection, usedCategories } from '../../lib/nav';
+import {
+	aiProjectsSection,
+	categorySection,
+	getPosts,
+	postsSection,
+	usedCategories,
+} from '../../lib/nav';
 
 const posts = await getPosts();
 const sections = [
 	categorySection(posts, 'all'),
+	aiProjectsSection(),
 	...usedCategories(posts).map((c) =>
 		postsSection(
 			c.name,

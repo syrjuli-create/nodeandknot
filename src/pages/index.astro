@@ -3,10 +3,14 @@ import Brand from '../components/Brand.astro';
 import PostList from '../components/PostList.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import SidebarPage from '../layouts/SidebarPage.astro';
-import { categorySection, getPosts, postsSection } from '../lib/nav';
+import { aiProjectsSection, categorySection, getPosts, postsSection } from '../lib/nav';
 
 const posts = await getPosts();
-const sections = [categorySection(posts), postsSection('최근 글', posts.slice(0, 5))];
+const sections = [
+	categorySection(posts),
+	aiProjectsSection(),
+	postsSection('최근 글', posts.slice(0, 5)),
+];
 ---
 
 <SidebarPage title={SITE_TITLE} description={SITE_DESCRIPTION} sections={sections}>

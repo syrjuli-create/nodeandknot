@@ -2,7 +2,14 @@
 import PostList from '../../../components/PostList.astro';
 import { SITE_TITLE } from '../../../consts';
 import SidebarPage from '../../../layouts/SidebarPage.astro';
-import { categorySection, getPosts, type Post, postsSection, usedCategories } from '../../../lib/nav';
+import {
+	aiProjectsSection,
+	categorySection,
+	getPosts,
+	type Post,
+	postsSection,
+	usedCategories,
+} from '../../../lib/nav';
 
 export async function getStaticPaths() {
 	const posts = await getPosts();
@@ -25,7 +32,7 @@ interface Props {
 }
 
 const { name, slug, posts, filtered } = Astro.props;
-const sections = [categorySection(posts, slug), postsSection(name, filtered)];
+const sections = [categorySection(posts, slug), aiProjectsSection(), postsSection(name, filtered)];
 ---
 
 <SidebarPage title={`${name} | ${SITE_TITLE}`} description={`${name} 글 모음`} sections={sections}>
