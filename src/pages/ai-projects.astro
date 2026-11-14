@@ -45,16 +45,21 @@ const sections = [aiProjectsSection()];
 						</span>
 					</div>
 				)}
-				<a
-					class="go"
-					href={p.url}
-					target="_blank"
-					rel="noopener"
-					data-tool-link={p.needsClaudeLogin ? 'claude' : undefined}
-					data-beta={p.status ? 'true' : undefined}
-				>
-					도구 열기 →
-				</a>
+				<div class="actions">
+					<a
+						class="go"
+						href={p.url}
+						target="_blank"
+						rel="noopener"
+						data-tool-link={p.needsClaudeLogin ? 'claude' : undefined}
+						data-beta={p.status ? 'true' : undefined}
+					>
+						도구 열기 →
+					</a>
+					<a class="back" href="/" data-back>
+						← 되돌아가기
+					</a>
+				</div>
 			</article>
 		))
 	}
@@ -76,6 +81,20 @@ const sections = [aiProjectsSection()];
 </SidebarPage>
 
 <script>
+	// 되돌아가기: 블로그 안에서 들어왔으면 이전 페이지로, 아니면(주소로 바로 들어온 경우) 홈으로.
+	document.querySelectorAll<HTMLAnchorElement>('a[data-back]').forEach((back) => {
+		back.addEventListener('click', (e) => {
+			let fromBlog = false;
+			try {
+				fromBlog = new URL(document.referrer).origin === location.origin;
+			} catch {}
+			if (fromBlog && history.length > 1) {
+				e.preventDefault();
+				history.back();
+			}
+		});
+	});
+
 	// Claude 로그인이 필요한 도구는 바로 이동하지 않고 안내 창을 먼저 띄운다.
 	// <dialog>를 못 쓰는 브라우저는 링크로 바로 이동한다.
 	const dialog = document.getElementById('claudeDialog') as HTMLDialogElement | null;
@@ -162,9 +181,33 @@ const sections = [aiProjectsSection()];
 	.notice.beta strong {
 		color: rgb(var(--text));
 	}
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 8px;
+	}
+	.back {
+		display: inline-block;
+		padding: 12px 20px;
+		border-radius: 10px;
+		background: #fff;
+		border: 1px solid #e5e8eb;
+		color: rgb(var(--gray-dark));
+		font-size: 15px;
+		font-weight: 600;
+		text-decoration: none;
+	}
+	.back:hover {
+		background: rgb(var(--gray-light));
+		color: rgb(var(--black));
+	}
+	.back:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
 	.go {
 		display: inline-block;
-		margin-top: 8px;
 		padding: 12px 20px;
 		border-radius: 10px;
 		background: var(--accent);
