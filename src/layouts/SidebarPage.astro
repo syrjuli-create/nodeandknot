@@ -4,15 +4,19 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import Sidebar from '../components/Sidebar.astro';
-import type { NavSection } from '../lib/nav';
+import { categorySection, getPosts, type NavSection } from '../lib/nav';
 
 interface Props {
 	title: string;
 	description: string;
 	sections: NavSection[];
+	/** 카테고리 메뉴에서 강조할 항목: 'all' 또는 카테고리 slug */
+	currentCategory?: string;
 }
 
-const { title, description, sections } = Astro.props;
+const { title, description, sections: pageSections, currentCategory } = Astro.props;
+// 카테고리 메뉴는 어느 페이지에서나 맨 위에 고정으로 보여 준다.
+const sections = [categorySection(await getPosts(), currentCategory), ...pageSections];
 ---
 
 <!doctype html>

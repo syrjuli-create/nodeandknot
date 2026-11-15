@@ -2,17 +2,10 @@
 import PostList from '../../components/PostList.astro';
 import { SITE_TITLE } from '../../consts';
 import SidebarPage from '../../layouts/SidebarPage.astro';
-import {
-	aiProjectsSection,
-	categorySection,
-	getPosts,
-	postsSection,
-	usedCategories,
-} from '../../lib/nav';
+import { aiProjectsSection, getPosts, postsSection, usedCategories } from '../../lib/nav';
 
 const posts = await getPosts();
 const sections = [
-	categorySection(posts, 'all'),
 	aiProjectsSection(),
 	...usedCategories(posts).map((c) =>
 		postsSection(
@@ -23,7 +16,12 @@ const sections = [
 ];
 ---
 
-<SidebarPage title={`Blog | ${SITE_TITLE}`} description="전체 글 목록" sections={sections}>
+<SidebarPage
+	title={`Blog | ${SITE_TITLE}`}
+	description="전체 글 목록"
+	sections={sections}
+	currentCategory="all"
+>
 	<section class="intro">
 		<h1>전체 글</h1>
 		<p>뜨개질하는 개발자의 기록</p>
