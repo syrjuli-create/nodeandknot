@@ -9,13 +9,15 @@ import Header from '../components/Header.astro';
 import Sidebar from '../components/Sidebar.astro';
 import { categoryHref, categorySection, categorySlug, getPosts, type NavSection } from '../lib/nav';
 
-type Props = Omit<CollectionEntry<'blog'>['data'], 'category'> & {
+type Props = Omit<CollectionEntry<'blog'>['data'], 'category' | 'tags' | 'draft'> & {
 	category?: string;
+	tags?: string[];
+	draft?: boolean;
 	sidebar?: NavSection[];
 	hideMeta?: boolean;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, category, sidebar, hideMeta } =
+const { title, description, pubDate, updatedDate, heroImage, category, tags, draft, sidebar, hideMeta } =
 	Astro.props;
 const BRAND = 'Node & Knot';
 const titleParts = title.split(BRAND);
@@ -61,6 +63,33 @@ const sections: NavSection[] = [
 			.meta a:hover {
 				color: var(--accent);
 			}
+			.draft-banner {
+				margin: 1em 0 0;
+				padding: 10px 14px;
+				border-radius: 12px;
+				background: var(--accent-soft);
+				color: var(--accent-dark);
+				font-size: 13px;
+			}
+			.draft-banner a {
+				color: inherit;
+				font-weight: 600;
+			}
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 6px;
+				margin: 3em 0 0;
+				padding: 0;
+				list-style: none;
+			}
+			.tags li {
+				padding: 4px 10px;
+				border-radius: 999px;
+				background: rgb(var(--gray-light));
+				color: rgb(var(--gray-dark));
+				font-size: 13px;
+			}
 			@media (max-width: 720px) {
 				.title h1 {
 					font-size: 24px;
@@ -77,6 +106,12 @@ const sections: NavSection[] = [
 			</div>
 			<article>
 				<header class="title">
+					{draft && (
+						<p class="draft-banner">
+							초안이에요. 배포에는 나가지 않아요. 다 쓰면 머리말의 <code>draft: true</code> 를 지워 주세요. ·{' '}
+							<a href="/preview/">미리보기로 돌아가기</a>
+						</p>
+					)}
 					<h1>
 						{titleParts.map((part, i) => (
 							<>
@@ -113,6 +148,11 @@ const sections: NavSection[] = [
 				<div class="prose">
 					<slot />
 				</div>
+				{tags && tags.length > 0 && (
+					<ul class="tags" aria-label="태그">
+						{tags.map((tag) => <li>#{tag}</li>)}
+					</ul>
+				)}
 			</article>
 		</main>
 		<Footer />

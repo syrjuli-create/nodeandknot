@@ -18,9 +18,12 @@ export interface NavSection {
 	items: NavItem[];
 }
 
+/** 배포 빌드에서는 draft: true인 글을 뺀다. dev 서버에서는 미리 볼 수 있게 보여 준다. */
+export const isVisible = (post: Post) => !(import.meta.env.PROD && post.data.draft);
+
 /** 모든 글을 최신순으로. */
 export async function getPosts(): Promise<Post[]> {
-	return (await getCollection('blog')).sort(
+	return (await getCollection('blog', isVisible)).sort(
 		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 	);
 }

@@ -11,6 +11,7 @@ import HeaderLink from './HeaderLink.astro';
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/reading">읽을거리</HeaderLink>
 			<HeaderLink href="/about">About</HeaderLink>
+			{import.meta.env.DEV && <HeaderLink href="/preview/">미리보기</HeaderLink>}
 		</div>
 	</nav>
 </header>

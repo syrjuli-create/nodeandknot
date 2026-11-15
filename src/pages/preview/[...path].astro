@@ -1,0 +1,369 @@
+---
+// 글 미리보기 대시보드 (npm run dev 에서만 /preview/ 로 열린다. 배포 빌드에는 만들어지지 않는다.)
+// 초안과 발행 글을 한눈에 보고, npm run check:posts 와 같은 검사 결과를 같이 보여 준다.
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import { checkPosts, DESC_MAX, DESC_MIN, relPath } from '../../../scripts/lib/check.mjs';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { SITE_TITLE } from '../../consts';
+import SidebarPage from '../../layouts/SidebarPage.astro';
+import { type NavSection, postHref } from '../../lib/nav';
+
+export function getStaticPaths() {
+	return import.meta.env.DEV ? [{ params: { path: undefined } }] : [];
+}
+
+type Problem = { level: 'error' | 'warn'; msg: string };
+type CheckResult = { rel: string; draft: boolean; data: Record<string, unknown> | null; problems: Problem[] };
+
+const { results, orphans } = checkPosts() as { results: CheckResult[]; orphans: string[] };
+const entries = await getCollection('blog');
+const entryOf = (rel: string) => entries.find((e) => e.filePath === rel);
+
+const rows = results
+	.map((r) => {
+		const entry = entryOf(r.rel);
+		const errors = r.problems.filter((p) => p.level === 'error').length;
+		const description = typeof r.data?.description === 'string' ? r.data.description.trim() : '';
+		return {
+			...r,
+			entry,
+			errors,
+			warns: r.problems.length - errors,
+			title: entry?.data.title ?? (typeof r.data?.title === 'string' ? r.data.title : r.rel),
+			description,
+			descLen: [...description].length,
+		};
+	})
+	.sort((a, b) => {
+		if (a.draft !== b.draft) return a.draft ? -1 : 1;
+		const da = a.entry?.data.pubDate.valueOf() ?? 0;
+		const db = b.entry?.data.pubDate.valueOf() ?? 0;
+		return db - da;
+	});
+
+const totals = {
+	posts: rows.length,
+	drafts: rows.filter((r) => r.draft).length,
+	errors: rows.reduce((n, r) => n + r.errors, 0),
+	warns: rows.reduce((n, r) => n + r.warns, 0) + orphans.length,
+};
+
+const descState = (len: number) => (len === 0 ? 'bad' : len < DESC_MIN || len > DESC_MAX ? 'meh' : 'ok');
+
+const sections: NavSection[] = [
+	{
+		label: '초안',
+		items: rows.filter((r) => r.draft).map((r) => ({ text: r.title, href: `#${r.rel}` })),
+	},
+	{
+		label: '발행된 글',
+		items: rows.filter((r) => !r.draft).map((r) => ({ text: r.title, href: `#${r.rel}` })),
+	},
+].filter((s) => s.items.length > 0);
+---
+
+<SidebarPage title={`미리보기 | ${SITE_TITLE}`} description="글 미리보기 (dev 전용)" sections={sections}>
+	<section class="intro">
+		<p class="dev-only">dev 전용 · 배포에는 나가지 않아요</p>
+		<h1>글 미리보기</h1>
+		<p>
+			초안과 발행된 글, 발행 전 검사 결과를 한 번에 봐요. 글을 저장한 뒤 새로 고침하면 바로 반영돼요.
+			새 글은 터미널에서 <code>npm run new</code>
+		</p>
+	</section>
+
+	<ul class="totals">
+		<li><strong>{totals.posts}</strong>전체 글</li>
+		<li class={totals.drafts ? 'draft' : ''}><strong>{totals.drafts}</strong>초안</li>
+		<li class={totals.errors ? 'error' : 'ok'}><strong>{totals.errors}</strong>오류</li>
+		<li class={totals.warns ? 'warn' : 'ok'}><strong>{totals.warns}</strong>경고</li>
+	</ul>
+
+	<ul class="rows">
+		{
+			rows.map((r) => {
+				const thumb = r.entry?.data.thumbnail ?? r.entry?.data.heroImage;
+				return (
+					<li id={r.rel} class:list={['row', { 'has-error': r.errors > 0 }]}>
+						<div class="head">
+							<div class="text">
+								<p class="badges">
+									<span class:list={['badge', r.draft ? 'badge-draft' : 'badge-live']}>
+										{r.draft ? '초안' : '발행'}
+									</span>
+									{r.errors > 0 && <span class="badge badge-error">오류 {r.errors}</span>}
+									{r.warns > 0 && <span class="badge badge-warn">경고 {r.warns}</span>}
+									{r.problems.length === 0 && <span class="badge badge-ok">검사 통과</span>}
+								</p>
+								<h2 class="title">
+									{r.entry ? <a href={postHref(r.entry)}>{r.title}</a> : r.title}
+								</h2>
+								<p class="meta">
+									{r.entry && (
+										<>
+											{r.entry.data.category} · <FormattedDate date={r.entry.data.pubDate} /> ·{' '}
+										</>
+									)}
+									<code>{r.rel}</code>
+								</p>
+								<p class="desc">
+									{r.description || <em>한 줄 소개가 아직 없어요</em>}
+									<span class:list={['count', descState(r.descLen)]}>
+										{r.descLen}자 (권장 {DESC_MIN}~{DESC_MAX})
+									</span>
+								</p>
+								{r.entry && r.entry.data.tags.length > 0 && (
+									<p class="tags">{r.entry.data.tags.map((t) => `#${t}`).join(' ')}</p>
+								)}
+							</div>
+							{thumb ? (
+								<Image class="thumb" width={240} height={160} src={thumb} alt="" />
+							) : (
+								<div class="thumb thumb-empty">썸네일 없음</div>
+							)}
+						</div>
+						{r.problems.length > 0 && (
+							<ul class="problems">
+								{r.problems.map((p) => (
+									<li class={p.level}>
+										<span class="icon">{p.level === 'error' ? '✖' : '⚠'}</span>
+										{p.msg}
+									</li>
+								))}
+							</ul>
+						)}
+					</li>
+				);
+			})
+		}
+	</ul>
+
+	{
+		orphans.length > 0 && (
+			<section class="orphans">
+				<h2>어떤 글에서도 쓰지 않는 사진</h2>
+				<p>지워도 되는지 확인해 보세요.</p>
+				<ul>
+					{orphans.map((o) => (
+						<li>
+							<code>{relPath(o)}</code>
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+</SidebarPage>
+
+<style>
+	.dev-only {
+		display: inline-block;
+		margin: 0 0 0.6em;
+		padding: 3px 10px;
+		border-radius: 999px;
+		background: #fff4e5;
+		color: #b25e09;
+		font-size: 12px;
+		font-weight: 600;
+	}
+	.intro h1 {
+		margin: 0;
+	}
+	.intro p {
+		color: rgb(var(--gray-dark));
+	}
+	.totals {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 10px;
+		margin: 1.5em 0 2em;
+		padding: 0;
+		list-style: none;
+	}
+	.totals li {
+		padding: 14px 16px;
+		border-radius: 16px;
+		background: rgb(var(--gray-light));
+		color: rgb(var(--gray-dark));
+		font-size: 13px;
+	}
+	.totals strong {
+		display: block;
+		font-size: 26px;
+		color: rgb(var(--black));
+	}
+	.totals .error strong {
+		color: #e5484d;
+	}
+	.totals .warn strong {
+		color: #c27c0e;
+	}
+	.totals .draft strong {
+		color: var(--accent);
+	}
+	.rows {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.row {
+		margin: 0 0 14px;
+		padding: 1.2em 1.3em;
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 20px;
+		scroll-margin-top: 80px;
+	}
+	.row.has-error {
+		border-color: #f5c2c4;
+	}
+	.row:target {
+		box-shadow: 0 0 0 2px var(--accent);
+	}
+	.head {
+		display: flex;
+		gap: 1.5em;
+		align-items: flex-start;
+	}
+	.text {
+		flex: 1;
+		min-width: 0;
+	}
+	.badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin: 0 0 0.5em;
+	}
+	.badge {
+		padding: 2px 9px;
+		border-radius: 999px;
+		font-size: 12px;
+		font-weight: 600;
+	}
+	.badge-draft {
+		background: var(--accent-soft);
+		color: var(--accent-dark);
+	}
+	.badge-live {
+		background: #e6f6ec;
+		color: #2a7a46;
+	}
+	.badge-error {
+		background: #fdecec;
+		color: #c62f34;
+	}
+	.badge-warn {
+		background: #fff4e5;
+		color: #a5600a;
+	}
+	.badge-ok {
+		background: rgb(var(--gray-light));
+		color: rgb(var(--gray-dark));
+	}
+	.title {
+		margin: 0;
+		font-size: 19px;
+		line-height: 1.45;
+	}
+	.title a {
+		color: rgb(var(--black));
+		text-decoration: none;
+	}
+	.title a:hover {
+		color: var(--accent);
+	}
+	.meta {
+		margin: 0.4em 0 0;
+		font-size: 12px;
+		color: rgb(var(--gray));
+	}
+	.meta code,
+	.orphans code {
+		font-size: 12px;
+	}
+	.desc {
+		margin: 0.7em 0 0;
+		font-size: 14px;
+		line-height: 1.6;
+		color: rgb(var(--gray-dark));
+	}
+	.desc em {
+		color: rgb(var(--gray));
+	}
+	.count {
+		margin-left: 0.5em;
+		font-size: 12px;
+		white-space: nowrap;
+	}
+	.count.ok {
+		color: #2a7a46;
+	}
+	.count.meh {
+		color: #a5600a;
+	}
+	.count.bad {
+		color: #c62f34;
+	}
+	.tags {
+		margin: 0.5em 0 0;
+		font-size: 13px;
+		color: rgb(var(--gray));
+	}
+	.thumb {
+		flex: none;
+		width: 120px;
+		height: 80px;
+		object-fit: cover;
+		border-radius: 12px;
+	}
+	.thumb-empty {
+		display: grid;
+		place-items: center;
+		background: rgb(var(--gray-light));
+		color: rgb(var(--gray));
+		font-size: 12px;
+	}
+	.problems {
+		margin: 1em 0 0;
+		padding: 0.8em 1em;
+		border-radius: 12px;
+		background: #fafbfc;
+		list-style: none;
+		font-size: 13px;
+		line-height: 1.6;
+	}
+	.problems li + li {
+		margin-top: 0.3em;
+	}
+	.problems .icon {
+		display: inline-block;
+		width: 1.4em;
+	}
+	.problems .error {
+		color: #c62f34;
+	}
+	.problems .warn {
+		color: #8a5208;
+	}
+	.orphans {
+		margin-top: 2.5em;
+	}
+	.orphans h2 {
+		font-size: 17px;
+		margin: 0;
+	}
+	@media (max-width: 720px) {
+		.totals {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.head {
+			flex-direction: column-reverse;
+			gap: 0.8em;
+		}
+		.thumb {
+			width: 100%;
+			height: 140px;
+		}
+	}
+</style>
