@@ -13,6 +13,10 @@ const sections = [
 ---
 
 <SidebarPage title={SITE_TITLE} description={SITE_DESCRIPTION} sections={sections}>
+	<section class="intro">
+		<h1><Brand /></h1>
+		<p>{SITE_DESCRIPTION}</p>
+	</section>
 	<div class="hero-video">
 		<video
 			src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/videos/hero.mp4`}
@@ -24,10 +28,6 @@ const sections = [
 			aria-hidden="true"
 		></video>
 	</div>
-	<section class="intro">
-		<h1><Brand /></h1>
-		<p>{SITE_DESCRIPTION}</p>
-	</section>
 	<PostList posts={posts} />
 </SidebarPage>
 
@@ -42,8 +42,11 @@ const sections = [
 </script>
 
 <style>
+	.intro {
+		margin-bottom: 1.2em;
+	}
 	.hero-video {
-		margin: 1.5em 0 0;
+		margin: 0 0 2em;
 		border-radius: 12px;
 		overflow: hidden;
 		aspect-ratio: 16 / 9;
