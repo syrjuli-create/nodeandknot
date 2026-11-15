@@ -13,9 +13,48 @@ const sections = [
 ---
 
 <SidebarPage title={SITE_TITLE} description={SITE_DESCRIPTION} sections={sections}>
+	<div class="hero-video">
+		<video
+			src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/videos/hero.mp4`}
+			autoplay
+			muted
+			loop
+			playsinline
+			preload="metadata"
+			aria-hidden="true"
+		></video>
+	</div>
 	<section class="intro">
 		<h1><Brand /></h1>
 		<p>{SITE_DESCRIPTION}</p>
 	</section>
 	<PostList posts={posts} />
 </SidebarPage>
+
+<script>
+	// 움직임 줄이기 설정을 켠 방문자에게는 영상을 멈춘 채로 보여 준다.
+	if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		document.querySelectorAll<HTMLVideoElement>('.hero-video video').forEach((v) => {
+			v.autoplay = false;
+			v.pause();
+		});
+	}
+</script>
+
+<style>
+	.hero-video {
+		margin: 1.5em 0 0;
+		border-radius: 12px;
+		overflow: hidden;
+		aspect-ratio: 16 / 9;
+		max-height: 360px;
+		width: 100%;
+		background: #2a2420;
+	}
+	.hero-video video {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+</style>
