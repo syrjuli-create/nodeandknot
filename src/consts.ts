@@ -16,3 +16,7 @@ export const CATEGORIES = [
 ] as const;
 
 export type CategoryName = (typeof CATEGORIES)[number]['name'];
+
+// Google 애널리틱스(GA4) 측정 ID. 예: 'G-ABC123XYZ'
+// 비워 두면 방문 분석 코드가 들어가지 않는다. 배포 빌드에서만 동작한다(npm run dev에서는 꺼짐).
+export const GA_MEASUREMENT_ID = 'G-79HVTEG8VP';
