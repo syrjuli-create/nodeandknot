@@ -9,6 +9,7 @@ import { NOTE_DIR, ROOT, listPostFiles, parseFrontmatter, readCategories } from 
 // content.config.ts 스키마에 있는 키. 여기에 없는 키는 Astro가 조용히 버린다.
 const KNOWN_KEYS = new Set([
 	'title',
+	'subtitle',
 	'description',
 	'pubDate',
 	'updatedDate',

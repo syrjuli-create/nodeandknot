@@ -17,8 +17,19 @@ type Props = Omit<CollectionEntry<'blog'>['data'], 'category' | 'tags' | 'draft'
 	hideMeta?: boolean;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, category, tags, draft, sidebar, hideMeta } =
-	Astro.props;
+const {
+	title,
+	subtitle,
+	description,
+	pubDate,
+	updatedDate,
+	heroImage,
+	category,
+	tags,
+	draft,
+	sidebar,
+	hideMeta,
+} = Astro.props;
 const BRAND = 'Node & Knot';
 const titleParts = title.split(BRAND);
 // 카테고리 메뉴는 어느 페이지에서나 맨 위에 고정으로 보여 준다.
@@ -39,6 +50,12 @@ const sections: NavSection[] = [
 				margin: 0;
 				font-size: 35px;
 				line-height: 1.35;
+			}
+			.title h1 .subtitle {
+				margin-left: 0.4em;
+				font-size: 0.5em;
+				font-weight: 400;
+				color: rgb(var(--gray));
 			}
 			.meta {
 				margin-top: 0.8em;
@@ -119,6 +136,7 @@ const sections: NavSection[] = [
 								{part}
 							</>
 						))}
+						{subtitle && <small class="subtitle">({subtitle})</small>}
 					</h1>
 					{!hideMeta && (
 					<div class="meta">

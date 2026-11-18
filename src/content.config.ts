@@ -12,6 +12,8 @@ const blog = defineCollection({
 	schema: ({ image }) =>
 		z.object({
 			title: z.string(),
+			// 글 페이지 제목 옆에 (괄호) 안에 작은 글씨로 붙는다. 목록·검색 결과에는 나오지 않음
+			subtitle: z.string().optional(),
 			description: z.string(),
 			// Transform string to Date object
 			pubDate: z.coerce.date(),
